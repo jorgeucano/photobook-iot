@@ -1,4 +1,3 @@
 # photobook-iot
 
-d
-ata
+use anroid iot started
