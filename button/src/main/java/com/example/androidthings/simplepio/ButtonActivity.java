@@ -22,30 +22,18 @@ import com.google.android.things.pio.Gpio;
 import com.google.android.things.pio.GpioCallback;
 import com.google.android.things.pio.PeripheralManager;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.icu.text.SimpleDateFormat;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
-
-import java.io.File;
-import java.io.FileOutputStream;
+import android.widget.TextView;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.Date;
 
 /**
  * Sample usage of the Gpio API that logs when a button is pressed.
@@ -60,7 +48,6 @@ public class ButtonActivity extends Activity {
     private MyCamera mCamera;
     private Handler mCameraHandler;
     private HandlerThread mCameraThread;
-
 
 
     @Override
@@ -99,24 +86,25 @@ public class ButtonActivity extends Activity {
             mCameraThread.start();
             mCameraHandler = new Handler(mCameraThread.getLooper());
             mCamera = MyCamera.getInstance();
-            mCamera.initializeCamera(this, mCameraHandler, mOnImageAvailableListener);
+            mCamera.initializeCamera(this, mCameraHandler, mOnImageAvailableListener, (TextView)findViewById(R.id.counter));
         }
 
         try {
             String pinName = BoardDefaults.getGPIOForButton();
-            mButtonGpio = PeripheralManager.getInstance().openGpio(pinName);
-            mButtonGpio.setDirection(Gpio.DIRECTION_IN);
-            mButtonGpio.setEdgeTriggerType(Gpio.EDGE_FALLING);
-            mButtonGpio.registerGpioCallback(new GpioCallback() {
+                mButtonGpio = PeripheralManager.getInstance().openGpio(pinName);
+                mButtonGpio.setDirection(Gpio.DIRECTION_IN);
+                mButtonGpio.setEdgeTriggerType(Gpio.EDGE_FALLING);
+                mButtonGpio.registerGpioCallback(new GpioCallback() {
                 @Override
                 public boolean onGpioEdge(Gpio gpio) {
-                    Log.i(TAG, "GPIO changed, button pressed");
+                Log.i(TAG, "GPIO changed, button pressed");
 
-                    mCamera.takePicture();
+                takePicture();
 
 
-                    // Return true to continue listening to events
-                    return true;
+
+                // Return true to continue listening to events
+                return true;
                 }
             });
         } catch (IOException e) {
@@ -125,6 +113,10 @@ public class ButtonActivity extends Activity {
     }
 
 
+    private void takePicture() {
+        mCamera.takePicture();
+
+    }
 
 
 
@@ -141,7 +133,11 @@ public class ButtonActivity extends Activity {
                     final byte[] imageBytes = new byte[imageBuf.remaining()];
                     imageBuf.get(imageBytes);
                     image.close();
-                    onPictureTaken(imageBytes);
+                    try {
+                        onPictureTaken(imageBytes);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             };
 
@@ -149,13 +145,11 @@ public class ButtonActivity extends Activity {
     /**
      * Upload image data to Firebase as a doorbell event.
      */
-    private void onPictureTaken(final byte[] imageBytes) {
+    private void onPictureTaken(final byte[] imageBytes) throws IOException {
 
 
         if (imageBytes != null) {
             Log.i(TAG,  "image get");
-
-
 
         }
         else{

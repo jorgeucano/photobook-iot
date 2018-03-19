@@ -2,27 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
     <Button
         android:id="@+id/buttonTake"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:text="Sacar foto"
         tools:text="sacar foto" />
 
-    <ImageView
-        android:id="@+id/image1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/bivenidos" />
-
-    <ImageView android:id="@+id/imageView1"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"></ImageView>
-
+    <TextView
+        android:id="@+id/counter"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:text="Selfie time"
+        android:textAlignment="center"
+        android:textSize="150dp"
+        tools:text="Selfie!" />
 
 
 </LinearLayout>

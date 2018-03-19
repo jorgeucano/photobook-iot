@@ -20,10 +20,13 @@ import android.content.Context;
         import android.os.Handler;
         import android.util.Log;
         import android.util.Size;
+import android.widget.TextView;
 
-        import java.util.Collections;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
-        import static android.content.Context.CAMERA_SERVICE;
+import static android.content.Context.CAMERA_SERVICE;
+import static java.util.concurrent.TimeUnit.*;
 
 /**
  * Helper class to deal with methods to deal with images from the camera.
@@ -38,6 +41,8 @@ public class MyCamera {
     private CameraDevice mCameraDevice;
 
     private CameraCaptureSession mCaptureSession;
+
+    private TextView counterTextView;
 
     /**
      * An {@link ImageReader} that handles still image capture.
@@ -61,9 +66,14 @@ public class MyCamera {
      */
     public void initializeCamera(Context context,
                                  Handler backgroundHandler,
-                                 ImageReader.OnImageAvailableListener imageAvailableListener) {
+                                 ImageReader.OnImageAvailableListener imageAvailableListener,
+                                 TextView counter) {
         // Discover the camera instance
         CameraManager manager = (CameraManager) context.getSystemService(CAMERA_SERVICE);
+
+
+        counterTextView = counter;
+
         String[] camIds = {};
         try {
             camIds = manager.getCameraIdList();
@@ -124,13 +134,19 @@ public class MyCamera {
      * Begin a still image capture
      */
     public void takePicture() {
+
+        counterTextView.setText("SEEELFIEEEEE!");
+
         if (mCameraDevice == null) {
             Log.e(TAG, "Cannot capture image. Camera not initialized.");
             return;
         }
-
         // Here, we create a CameraCaptureSession for capturing still images.
         try {
+            int i = 0;
+            while (i < 10000000) {
+                i++;
+            }
             mCameraDevice.createCaptureSession(
                     Collections.singletonList(mImageReader.getSurface()),
                     mSessionCallback,
@@ -200,6 +216,7 @@ public class MyCamera {
                         session.close();
                         mCaptureSession = null;
                         Log.d(TAG, "CaptureSession closed");
+                        counterTextView.setText("Selfie Time!");
                     }
                 }
             };
